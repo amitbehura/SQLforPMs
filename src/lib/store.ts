@@ -4,6 +4,7 @@ import { getCurriculum } from '../data/assignments';
 
 interface CurriculumState {
   role: string | null;
+  lastActiveRole: string | null; // Track the role the progress belongs to
   currentLevel: number;
   phase: 'teaching' | 'testing';
   completedTests: string[];
@@ -20,16 +21,33 @@ export const useCurriculumStore = create<CurriculumState>()(
   persist(
     (set, get) => ({
       role: null,
+      lastActiveRole: null,
       currentLevel: 1,
       phase: 'teaching',
       completedTests: [],
       skippedTests: [],
 
-      setRole: (role) => set((state) => {
-        if (state.role !== role) {
-          return { role, currentLevel: 1, phase: 'teaching', completedTests: [], skippedTests: [] };
+      setRole: (newRole) => set((state) => {
+        // Case 1: Leaving the desk
+        if (newRole === null) {
+          return { role: null };
         }
-        return { role };
+
+        // Case 2: Selecting a role (either first time or returning)
+        // Only reset if the new role is DIFFERENT from the last role we had progress in
+        if (state.lastActiveRole !== null && state.lastActiveRole !== newRole) {
+          return { 
+            role: newRole, 
+            lastActiveRole: newRole,
+            currentLevel: 1, 
+            phase: 'teaching', 
+            completedTests: [], 
+            skippedTests: [] 
+          };
+        }
+
+        // Case 3: Returning to the same role or first time initialization
+        return { role: newRole, lastActiveRole: newRole };
       }),
       
       startTesting: () => set({ phase: 'testing' }),
@@ -84,7 +102,7 @@ export const useCurriculumStore = create<CurriculumState>()(
         const state = get();
         const curriculum = getCurriculum(state.role);
         const assignment = curriculum.find(a => a.level === level);
-        if (!assignment) return; // Prevent jumping to invalid levels
+        if (!assignment) return;
 
         const testsInLevel = assignment.tests.map(t => t.id);
         const newCompleted = state.completedTests.filter(id => !testsInLevel.includes(id));
@@ -102,10 +120,6 @@ export const useCurriculumStore = create<CurriculumState>()(
     }),
     {
       name: 'paypaysql-storage',
-      // Ensure we don't have hydration issues in React 18+
-      onRehydrateStorage: () => (state) => {
-        console.log('Hydration finished:', state);
-      },
     }
   )
 );
