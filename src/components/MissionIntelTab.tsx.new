@@ -1,0 +1,36 @@
+import React from 'react';
+import { useCurriculumStore } from '../lib/store';
+import { getCurriculum } from '../data/assignments';
+
+export function MissionIntelTab() {
+  const { currentLevel, role } = useCurriculumStore();
+  const curriculum = getCurriculum(role);
+  const assignment = curriculum.find(a => a.level === currentLevel);
+
+  if (!assignment) {
+    return <div style={{ padding: '24px', color: 'var(--text-muted)' }}>No mission intel available.</div>;
+  }
+
+  return (
+    <div style={{ 
+      padding: '32px', height: '100%', overflowY: 'auto', 
+      backgroundColor: 'var(--bg-dark)', color: 'var(--text-main)',
+      fontFamily: 'var(--font-sans)'
+    }}>
+      <div style={{ maxWidth: '800px', margin: '0 auto' }}>
+        <div style={{ 
+          display: 'inline-block', padding: '4px 12px', backgroundColor: 'var(--bg-active)', 
+          border: '1px solid var(--border-color)', borderRadius: '16px', 
+          fontSize: '12px', fontWeight: 600, color: 'var(--accent-color)', marginBottom: '16px'
+        }}>
+          CURRENT LEVEL: {currentLevel}
+        </div>
+        
+        <h1 style={{ fontSize: '32px', fontWeight: 700, margin: '0 0 16px 0', color: '#fff' }}>
+          {assignment.title}
+        </h1>
+        
+        <p style={{ fontSize: '16px', color: 'var(--text-muted)', fontStyle: 'italic', marginBottom: '32px', borderLeft: '3px solid var(--border-color)', paddingLeft: '16px' }}>
+          {assignment.goal}
+        </p>
+// ... rest of the file stays same
