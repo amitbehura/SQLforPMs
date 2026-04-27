@@ -11,12 +11,13 @@ interface CurriculumPanelProps {
 }
 
 export function CurriculumPanel({ role, onExit, activeQuery, onFillQuery }: CurriculumPanelProps) {
-  const { currentLevel, phase, completedTests, skippedTests, passTest, skipTest, jumpToLevel } = useCurriculumStore();
+  const { currentLevel, phase, completedTests, skippedTests, passTest, skipTest, jumpToLevel, startTesting } = useCurriculumStore();
   const [verifyError, setVerifyError] = useState<string | null>(null);
 
   const curriculum = getCurriculum(role);
   const assignment = curriculum.find(a => a.level === currentLevel);
 
+  // Fallback if level not found
   if (!assignment) {
     return (
       <div style={{ padding: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -29,15 +30,12 @@ export function CurriculumPanel({ role, onExit, activeQuery, onFillQuery }: Curr
     );
   }
 
+  // Find the first test that is neither completed nor skipped
   const currentTest = assignment.tests.find(t => !completedTests.includes(t.id) && !skippedTests.includes(t.id));
 
   useEffect(() => {
     setVerifyError(null);
   }, [currentTest?.id]);
-
-  if (!currentTest && phase === 'testing') {
-     return <div style={{ padding: '20px' }}>Loading next level...</div>;
-  }
 
   const handleVerify = async () => {
     setVerifyError(null);
@@ -110,8 +108,9 @@ export function CurriculumPanel({ role, onExit, activeQuery, onFillQuery }: Curr
             <span style={{ fontSize: '12px', color: 'var(--text-muted)', marginRight: '4px' }}>Tracker:</span>
             <div title="Tutorial" style={{ 
               width: '14px', height: '14px', borderRadius: '4px', 
-              backgroundColor: 'var(--accent-color)', border: '1px solid var(--border-color)' 
-            }} />
+              backgroundColor: 'var(--accent-color)', border: '1px solid var(--border-color)',
+              cursor: 'pointer'
+            }} onClick={() => jumpToLevel(currentLevel)} />
             <div style={{ width: '10px', height: '2px', backgroundColor: 'var(--border-color)' }} />
             
             {assignment.tests.map((t, idx) => {
@@ -141,15 +140,33 @@ export function CurriculumPanel({ role, onExit, activeQuery, onFillQuery }: Curr
           </div>
         </div>
         
-        {phase === 'testing' && currentTest && (
-          <>
-            <p style={{ fontSize: '15px', lineHeight: '1.4', margin: '10px 0', padding: '12px', backgroundColor: 'var(--bg-dark)', borderRadius: '6px', borderLeft: '3px solid var(--accent-color)' }}>
-              <strong>Challenge:</strong> {currentTest.prompt}
+        {phase === 'teaching' && (
+          <div style={{ padding: '12px', backgroundColor: 'var(--bg-dark)', borderRadius: '6px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <p style={{ margin: 0, fontSize: '14px', color: 'var(--text-muted)' }}>
+              Reading Intel for <strong>Level {currentLevel}</strong>...
             </p>
+            <button className="primary" onClick={startTesting} style={{ padding: '6px 12px', fontSize: '12px' }}>
+              Accept Mission 🚀
+            </button>
+          </div>
+        )}
 
-            {verifyError && (
-              <div style={{ color: '#ff4d4d', fontSize: '13px', marginTop: '8px', padding: '8px', backgroundColor: 'rgba(255, 77, 77, 0.1)', borderRadius: '4px' }}>
-                ❌ {verifyError}
+        {phase === 'testing' && (
+          <>
+            {currentTest ? (
+              <>
+                <p style={{ fontSize: '15px', lineHeight: '1.4', margin: '10px 0', padding: '12px', backgroundColor: 'var(--bg-dark)', borderRadius: '6px', borderLeft: '3px solid var(--accent-color)' }}>
+                  <strong>Challenge:</strong> {currentTest.prompt}
+                </p>
+                {verifyError && (
+                  <div style={{ color: '#ff4d4d', fontSize: '13px', marginTop: '8px', padding: '8px', backgroundColor: 'rgba(255, 77, 77, 0.1)', borderRadius: '4px' }}>
+                    ❌ {verifyError}
+                  </div>
+                )}
+              </>
+            ) : (
+              <div style={{ padding: '12px', backgroundColor: 'var(--success-faint)', borderRadius: '6px', border: '1px solid var(--success)', color: 'var(--success)', fontSize: '14px' }}>
+                ✅ Level Complete! Use the dropdown or tracker above to navigate.
               </div>
             )}
           </>
