@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { DatabaseNavigator } from './DatabaseNavigator';
 import { QueryEditor } from './QueryEditor';
 import { ResultsPanel } from './ResultsPanel';
@@ -14,7 +14,7 @@ interface Tab {
   id: string;
   name: string;
   query: string;
-  results: Record<string, unknown>[] | null;
+  results: any[] | null;
   columns: string[] | null;
   error: string | null;
 }
