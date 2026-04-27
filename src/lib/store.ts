@@ -4,7 +4,7 @@ import { getCurriculum } from '../data/assignments';
 
 interface CurriculumState {
   role: string | null;
-  lastActiveRole: string | null; // Track the role the progress belongs to
+  lastActiveRole: string | null;
   currentLevel: number;
   phase: 'teaching' | 'testing';
   completedTests: string[];
@@ -28,13 +28,7 @@ export const useCurriculumStore = create<CurriculumState>()(
       skippedTests: [],
 
       setRole: (newRole) => set((state) => {
-        // Case 1: Leaving the desk
-        if (newRole === null) {
-          return { role: null };
-        }
-
-        // Case 2: Selecting a role (either first time or returning)
-        // Only reset if the new role is DIFFERENT from the last role we had progress in
+        if (newRole === null) return { role: null };
         if (state.lastActiveRole !== null && state.lastActiveRole !== newRole) {
           return { 
             role: newRole, 
@@ -45,8 +39,6 @@ export const useCurriculumStore = create<CurriculumState>()(
             skippedTests: [] 
           };
         }
-
-        // Case 3: Returning to the same role or first time initialization
         return { role: newRole, lastActiveRole: newRole };
       }),
       
@@ -104,15 +96,11 @@ export const useCurriculumStore = create<CurriculumState>()(
         const assignment = curriculum.find(a => a.level === level);
         if (!assignment) return;
 
-        const testsInLevel = assignment.tests.map(t => t.id);
-        const newCompleted = state.completedTests.filter(id => !testsInLevel.includes(id));
-        const newSkipped = state.skippedTests.filter(id => !testsInLevel.includes(id));
-
+        // We no longer remove the tests from completed/skipped lists.
+        // This allows the user to see their history when jumping back.
         set({
           currentLevel: level,
-          phase: 'teaching',
-          completedTests: newCompleted,
-          skippedTests: newSkipped
+          phase: 'teaching'
         });
       },
       
