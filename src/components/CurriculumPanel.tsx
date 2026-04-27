@@ -13,6 +13,7 @@ interface CurriculumPanelProps {
 export function CurriculumPanel({ role, onExit, activeQuery, onFillQuery }: CurriculumPanelProps) {
   const { currentLevel, phase, completedTests, skippedTests, passTest, skipTest, jumpToLevel, startTesting } = useCurriculumStore();
   const [verifyError, setVerifyError] = useState<string | null>(null);
+  const [selectedTestId, setSelectedTestId] = useState<string | null>(null);
 
   const curriculum = getCurriculum(role);
   const assignment = curriculum.find(a => a.level === currentLevel);
@@ -30,12 +31,15 @@ export function CurriculumPanel({ role, onExit, activeQuery, onFillQuery }: Curr
     );
   }
 
-  // Find the first test that is neither completed nor skipped
-  const currentTest = assignment.tests.find(t => !completedTests.includes(t.id) && !skippedTests.includes(t.id));
+  // Find the current test based on selection or first uncompleted
+  const autoNextTest = assignment.tests.find(t => !completedTests.includes(t.id) && !skippedTests.includes(t.id));
+  const activeTest = assignment.tests.find(t => t.id === selectedTestId) || autoNextTest;
 
   useEffect(() => {
     setVerifyError(null);
-  }, [currentTest?.id]);
+    // When level changes, reset selection to let auto-next handle it
+    setSelectedTestId(null);
+  }, [currentLevel]);
 
   const handleVerify = async () => {
     setVerifyError(null);
@@ -44,12 +48,12 @@ export function CurriculumPanel({ role, onExit, activeQuery, onFillQuery }: Curr
       return;
     }
     
-    if (!currentTest) return;
+    if (!activeTest) return;
 
     try {
       const db = await getDb();
       const userRes = await db.query(activeQuery);
-      const solutionRes = await db.query(currentTest.solutionQuery);
+      const solutionRes = await db.query(activeTest.solutionQuery);
 
       const userCols = userRes.fields.map(f => f.name).join(', ');
       const solCols = solutionRes.fields.map(f => f.name).join(', ');
@@ -71,7 +75,12 @@ export function CurriculumPanel({ role, onExit, activeQuery, onFillQuery }: Curr
         return;
       }
 
-      passTest(currentTest.id);
+      // If it's a re-attempt of a finished test, don't trigger store level-up logic unnecessarily
+      if (!completedTests.includes(activeTest.id)) {
+        passTest(activeTest.id);
+      } else {
+        alert("Verification successful! You've cleared this challenge again.");
+      }
 
     } catch (e: any) {
       setVerifyError("SQL Error: " + e.message);
@@ -79,8 +88,8 @@ export function CurriculumPanel({ role, onExit, activeQuery, onFillQuery }: Curr
   };
 
   const handleAskDataEngineer = () => {
-    if (currentTest) {
-      onFillQuery(currentTest.solutionQuery);
+    if (activeTest) {
+      onFillQuery(activeTest.solutionQuery);
     }
   };
 
@@ -116,21 +125,29 @@ export function CurriculumPanel({ role, onExit, activeQuery, onFillQuery }: Curr
             {assignment.tests.map((t, idx) => {
               const isCompleted = completedTests.includes(t.id);
               const isSkipped = skippedTests.includes(t.id);
-              const isCurrent = currentTest?.id === t.id;
+              const isSelected = activeTest?.id === t.id;
               
               let bgColor = 'var(--bg-active)';
               if (isCompleted) bgColor = 'var(--success)';
               else if (isSkipped) bgColor = 'var(--warning)';
-              else if (isCurrent) bgColor = 'var(--accent-color)';
 
               return (
                 <div key={t.id} style={{ display: 'flex', alignItems: 'center' }}>
-                  <div title={t.prompt} style={{ 
-                    width: '14px', height: '14px', borderRadius: '50%', 
-                    backgroundColor: bgColor,
-                    border: isCurrent ? '2px solid white' : '1px solid var(--border-color)',
-                    boxShadow: isCurrent ? '0 0 8px var(--accent-color)' : 'none'
-                  }} />
+                  <div 
+                    title={t.prompt} 
+                    onClick={() => {
+                      setSelectedTestId(t.id);
+                      if (phase === 'teaching') startTesting();
+                    }}
+                    style={{ 
+                      width: '16px', height: '16px', borderRadius: '50%', 
+                      backgroundColor: bgColor,
+                      border: isSelected ? '2px solid white' : '1px solid var(--border-color)',
+                      boxShadow: isSelected ? '0 0 8px var(--accent-color)' : 'none',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease'
+                    }} 
+                  />
                   {idx < assignment.tests.length - 1 && (
                     <div style={{ width: '10px', height: '2px', backgroundColor: 'var(--border-color)', marginLeft: '8px' }} />
                   )}
@@ -153,10 +170,11 @@ export function CurriculumPanel({ role, onExit, activeQuery, onFillQuery }: Curr
 
         {phase === 'testing' && (
           <>
-            {currentTest ? (
+            {activeTest ? (
               <>
                 <p style={{ fontSize: '15px', lineHeight: '1.4', margin: '10px 0', padding: '12px', backgroundColor: 'var(--bg-dark)', borderRadius: '6px', borderLeft: '3px solid var(--accent-color)' }}>
-                  <strong>Challenge:</strong> {currentTest.prompt}
+                  {completedTests.includes(activeTest.id) && <span style={{ color: 'var(--success)', marginRight: '8px' }}>[COMPLETED]</span>}
+                  <strong>Challenge:</strong> {activeTest.prompt}
                 </p>
                 {verifyError && (
                   <div style={{ color: '#ff4d4d', fontSize: '13px', marginTop: '8px', padding: '8px', backgroundColor: 'rgba(255, 77, 77, 0.1)', borderRadius: '4px' }}>
@@ -166,7 +184,7 @@ export function CurriculumPanel({ role, onExit, activeQuery, onFillQuery }: Curr
               </>
             ) : (
               <div style={{ padding: '12px', backgroundColor: 'var(--success-faint)', borderRadius: '6px', border: '1px solid var(--success)', color: 'var(--success)', fontSize: '14px' }}>
-                ✅ Level Complete! Use the dropdown or tracker above to navigate.
+                ✅ Level Complete! You can click any circle in the tracker to re-attempt specific challenges.
               </div>
             )}
           </>
@@ -174,14 +192,16 @@ export function CurriculumPanel({ role, onExit, activeQuery, onFillQuery }: Curr
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', minWidth: '150px' }}>
-        {phase === 'testing' && currentTest && (
+        {phase === 'testing' && activeTest && (
           <>
             <button className="primary" onClick={handleVerify}>
               ✓ Verify Script
             </button>
-            <button onClick={() => skipTest(currentTest.id)}>
-              ⏭ Skip Challenge
-            </button>
+            {!completedTests.includes(activeTest.id) && (
+              <button onClick={() => skipTest(activeTest.id)}>
+                ⏭ Skip Challenge
+              </button>
+            )}
             <button onClick={handleAskDataEngineer} style={{ borderColor: 'var(--warning)', color: 'var(--warning)' }}>
               🆘 Ask Data Engineer
             </button>
