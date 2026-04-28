@@ -72,6 +72,7 @@ export function OfficeGame({ onSelectRole }: { onSelectRole: (role: Role) => voi
       alignItems: 'center',
       justifyContent: 'center',
       height: '100%',
+      paddingTop: '40px',
       backgroundColor: '#0f172a', // Deep slate background
       color: '#f8fafc',
       fontFamily: 'var(--font-sans)',
