@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import { BookOpen, X, Database, Filter, Calculator, Link, Layers, Activity } from 'lucide-react';
 
 const SECTIONS = [
+  { id: 'mindset', title: '0. PM Mindset', icon: <Activity size={16} /> },
   { id: 'basics', title: '1. The Basics', icon: <Database size={16} /> },
   { id: 'filtering', title: '2. Filtering Data', icon: <Filter size={16} /> },
   { id: 'aggregations', title: '3. Aggregations', icon: <Calculator size={16} /> },
   { id: 'joins', title: '4. Joins', icon: <Link size={16} /> },
-  { id: 'advanced', title: '5. Advanced Logic', icon: <Layers size={16} /> },
-  { id: 'window', title: '6. Window Functions', icon: <Activity size={16} /> }
+  { id: 'funnels', title: '5. PM Funnels', icon: <Layers size={16} /> }
 ];
 
 export function SQLReferenceBook({ onClose }: { onClose: () => void }) {
@@ -81,26 +81,54 @@ export function SQLReferenceBook({ onClose }: { onClose: () => void }) {
           {/* Content Area */}
           <div style={{ flex: 1, backgroundColor: '#0b1120', padding: '40px 60px', overflowY: 'auto' }}>
             
+            {activeSection === 'mindset' && (
+              <div className="prose">
+                <h1 style={{ fontSize: '36px', marginBottom: '8px' }}>The PM Mindset</h1>
+                <p style={{ color: '#94a3b8', fontSize: '18px', marginBottom: '32px' }}>Why PMs should learn SQL instead of waiting for a dashboard.</p>
+                
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '32px' }}>
+                  <div style={{ backgroundColor: '#1e293b', padding: '20px', borderRadius: '8px' }}>
+                    <h4 style={{ color: '#38bdf8', marginBottom: '8px' }}>Speed to Insight</h4>
+                    <p style={{ fontSize: '14px', color: '#cbd5e1' }}>Don't wait 2 days for a Data Analyst to answer "How many users dropped off?". Find out in 2 minutes.</p>
+                  </div>
+                  <div style={{ backgroundColor: '#1e293b', padding: '20px', borderRadius: '8px' }}>
+                    <h4 style={{ color: '#38bdf8', marginBottom: '8px' }}>Data Literacy</h4>
+                    <p style={{ fontSize: '14px', color: '#cbd5e1' }}>Understand the "logic" of your product. If you know the tables, you know how your feature actually works.</p>
+                  </div>
+                </div>
+
+                <h3 style={{ fontSize: '20px', color: '#f8fafc', marginBottom: '16px' }}>The Core Strategy</h3>
+                <ol style={{ color: '#94a3b8', lineHeight: 1.8 }}>
+                  <li><strong>Start Small</strong>: Don't try to join 10 tables. Start with one.</li>
+                  <li><strong>Use LIMIT</strong>: Databases are expensive. Always limit your results while testing.</li>
+                  <li><strong>Verify with UI</strong>: Check if the number you get in SQL matches what you see in the admin dashboard.</li>
+                </ol>
+              </div>
+            )}
+
             {activeSection === 'basics' && (
               <div className="prose">
                 <h1 style={{ fontSize: '36px', marginBottom: '8px' }}>1. The Basics</h1>
-                <p style={{ color: '#94a3b8', fontSize: '18px', marginBottom: '32px' }}>The foundation of every query.</p>
+                <p style={{ color: '#94a3b8', fontSize: '18px', marginBottom: '32px' }}>The database is just a collection of smart spreadsheets.</p>
                 
                 <div style={{ backgroundColor: '#1e293b', padding: '20px', borderRadius: '8px', marginBottom: '32px' }}>
-                  <h4 style={{ margin: '0 0 8px 0', color: '#f8fafc' }}>What is SQL?</h4>
-                  <p style={{ margin: 0, color: '#cbd5e1', lineHeight: 1.6 }}>SQL (Structured Query Language) is how we ask databases for information. Think of a database like a massive collection of Excel spreadsheets (called <strong>Tables</strong>). Every row is a record, and every column is a specific attribute.</p>
+                  <h4 style={{ margin: '0 0 8px 0', color: '#f8fafc' }}>Mental Model</h4>
+                  <p style={{ margin: 0, color: '#cbd5e1', lineHeight: 1.6 }}>Think of a database like an Excel workbook. <br />
+                  • <strong>Table</strong> = A single Sheet (e.g. "Orders") <br />
+                  • <strong>Column</strong> = A Column in Excel (e.g. "Price") <br />
+                  • <strong>Row</strong> = One specific record (e.g. "Order #123")</p>
                 </div>
                 
-                <h3 style={{ fontSize: '20px', color: '#38bdf8', marginTop: '32px' }}>SELECT * (Select All)</h3>
-                <p>Grabs every column and row from a table. Always use LIMIT to avoid crashing the database.</p>
+                <h3 style={{ fontSize: '20px', color: '#38bdf8', marginTop: '32px' }}>The "Hello World" of SQL</h3>
+                <p>Grabs everything from the table. Use <code>LIMIT 10</code> to just see a sample.</p>
                 <code style={{ display: 'block', padding: '16px', background: '#000', borderRadius: '8px', color: '#9cdcfe', marginTop: '12px' }}>
                   SELECT * FROM merchants LIMIT 10;
                 </code>
 
-                <h3 style={{ fontSize: '20px', color: '#38bdf8', marginTop: '32px' }}>Selecting Specific Columns</h3>
-                <p>Reduces noise by only returning the exact columns you ask for.</p>
+                <h3 style={{ fontSize: '20px', color: '#38bdf8', marginTop: '32px' }}>Selecting Only What You Need</h3>
+                <p>Avoid "Data Overload". Only ask for the specific columns you are analyzing.</p>
                 <code style={{ display: 'block', padding: '16px', background: '#000', borderRadius: '8px', color: '#9cdcfe', marginTop: '12px' }}>
-                  SELECT name, country FROM merchants LIMIT 10;
+                  SELECT name, country, created_at FROM merchants;
                 </code>
               </div>
             )}
@@ -182,57 +210,29 @@ export function SQLReferenceBook({ onClose }: { onClose: () => void }) {
               </div>
             )}
 
-            {activeSection === 'advanced' && (
+            {activeSection === 'funnels' && (
               <div className="prose">
-                <h1 style={{ fontSize: '36px', marginBottom: '8px' }}>5. Advanced Logic</h1>
-                <p style={{ color: '#94a3b8', fontSize: '18px', marginBottom: '32px' }}>Subqueries, CTEs, and Business Logic.</p>
+                <h1 style={{ fontSize: '36px', marginBottom: '8px' }}>PM Funnels & Cohorts</h1>
+                <p style={{ color: '#94a3b8', fontSize: '18px', marginBottom: '32px' }}>Advanced techniques for measuring growth and retention.</p>
                 
-                <h3 style={{ fontSize: '20px', color: '#38bdf8', marginTop: '32px' }}>CASE WHEN (If/Else)</h3>
-                <p>Creates buckets dynamically.</p>
+                <h3 style={{ fontSize: '20px', color: '#38bdf8', marginTop: '32px' }}>Conversion: Who paid?</h3>
+                <p>Use a <code>LEFT JOIN</code> to find users who signed up but NEVER paid. These are your drop-off opportunities.</p>
                 <code style={{ display: 'block', padding: '16px', background: '#000', borderRadius: '8px', color: '#9cdcfe', marginTop: '12px' }}>
-                  {"SELECT amount, CASE WHEN amount > 1000 THEN 'Large' ELSE 'Small' END as bucket FROM payments;"}
+                  {"SELECT u.id FROM users u LEFT JOIN payments p ON u.id = p.user_id WHERE p.id IS NULL;"}
                 </code>
 
-                <h3 style={{ fontSize: '20px', color: '#38bdf8', marginTop: '32px' }}>Subqueries</h3>
-                <p>A query inside a query.</p>
+                <h3 style={{ fontSize: '20px', color: '#38bdf8', marginTop: '32px' }}>Active User Cohorts</h3>
+                <p>Finding users who performed an action in the last 30 days.</p>
                 <code style={{ display: 'block', padding: '16px', background: '#000', borderRadius: '8px', color: '#9cdcfe', marginTop: '12px' }}>
-                  {"SELECT amount FROM payments WHERE amount > (SELECT AVG(amount) FROM payments);"}
+                  {"SELECT count(*) FROM sessions WHERE created_at > NOW() - INTERVAL '30 days';"}
                 </code>
 
-                <h3 style={{ fontSize: '20px', color: '#38bdf8', marginTop: '32px' }}>Common Table Expressions (WITH)</h3>
-                <p>Breaks massive queries down into readable steps.</p>
-                <code style={{ display: 'block', padding: '16px', background: '#000', borderRadius: '8px', color: '#9cdcfe', marginTop: '12px' }}>
-                  WITH US_Merchants AS (SELECT * FROM merchants WHERE country = 'US') 
-                  SELECT COUNT(*) FROM US_Merchants;
-                </code>
-              </div>
-            )}
-
-            {activeSection === 'window' && (
-              <div className="prose">
-                <h1 style={{ fontSize: '36px', marginBottom: '8px' }}>6. Window Functions</h1>
-                <p style={{ color: '#94a3b8', fontSize: '18px', marginBottom: '32px' }}>The PM superpower for running totals, leaderboards, and MoM growth.</p>
-                
-                <h3 style={{ fontSize: '20px', color: '#38bdf8', marginTop: '32px' }}>Rolling Totals (OVER PARTITION BY)</h3>
-                <p>Calculates aggregates alongside raw row data.</p>
-                <code style={{ display: 'block', padding: '16px', background: '#000', borderRadius: '8px', color: '#9cdcfe', marginTop: '12px' }}>
-                  SELECT amount, SUM(amount) OVER (PARTITION BY merchant_id) FROM payments;
-                </code>
-
-                <h3 style={{ fontSize: '20px', color: '#38bdf8', marginTop: '32px' }}>Leaderboards (RANK / ROW_NUMBER)</h3>
-                <p>Assigns a rank to each row within a partition. RANK() gives ties the same number. ROW_NUMBER() forces a unique number for every row.</p>
-                <code style={{ display: 'block', padding: '16px', background: '#000', borderRadius: '8px', color: '#9cdcfe', marginTop: '12px', marginBottom: '12px' }}>
-                  SELECT name, RANK() OVER (PARTITION BY country ORDER BY created_at DESC) FROM merchants;
-                </code>
-                <code style={{ display: 'block', padding: '16px', background: '#000', borderRadius: '8px', color: '#9cdcfe', marginTop: '12px' }}>
-                  SELECT amount, ROW_NUMBER() OVER (ORDER BY amount DESC) FROM payments;
-                </code>
-
-                <h3 style={{ fontSize: '20px', color: '#38bdf8', marginTop: '32px' }}>Month-over-Month (LAG / LEAD)</h3>
-                <p>Looks at the previous row's value (LAG) or the next row's value (LEAD) to calculate growth or time between events.</p>
-                <code style={{ display: 'block', padding: '16px', background: '#000', borderRadius: '8px', color: '#9cdcfe', marginTop: '12px' }}>
-                  SELECT month, total_fees, LAG(total_fees) OVER (ORDER BY month) FROM invoices;
-                </code>
+                <div style={{ marginTop: '40px', padding: '24px', backgroundColor: 'rgba(56, 189, 248, 0.1)', border: '1px solid #38bdf8', borderRadius: '8px' }}>
+                  <h4 style={{ color: '#38bdf8', margin: '0 0 12px 0' }}>💡 PM Secret Tip</h4>
+                  <p style={{ margin: 0, fontSize: '14px', color: '#cbd5e1', lineHeight: 1.6 }}>
+                    Always check for <strong>NULL</strong> values before doing math. If a column has empty spaces, your <code>AVG()</code> or <code>SUM()</code> might give you confusing results. Use <code>COALESCE(amount, 0)</code> to treat empty spaces as zero.
+                  </p>
+                </div>
               </div>
             )}
 

@@ -27,6 +27,15 @@ export function Workspace({ role, onExit }: { role: Role; onExit: () => void }) 
     { id: '1', name: 'SQL Script 1', query: '', results: null, columns: null, error: null }
   ]);
   const [activeTabId, setActiveTabId] = useState<string>('tutorial');
+  const [showOnboarding, setShowOnboarding] = useState(false);
+
+  useEffect(() => {
+    const visited = localStorage.getItem('visited_workspace');
+    if (!visited) {
+      setShowOnboarding(true);
+      localStorage.setItem('visited_workspace', 'true');
+    }
+  }, []);
 
   useEffect(() => {
     getDb().then(() => setDbReady(true)).catch(err => setDbError(err.message));
@@ -171,6 +180,57 @@ export function Workspace({ role, onExit }: { role: Role; onExit: () => void }) 
 
         </div>
       </div>
+
+      {/* Workspace Onboarding Overlay */}
+      {showOnboarding && (activeTabId === 'tutorial' || activeTabId === '1') && (
+        <div style={{
+          position: 'fixed', inset: 0, zIndex: 1000,
+          backgroundColor: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)',
+          display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'
+        }}>
+          <div style={{
+            backgroundColor: '#1e293b', border: '1px solid #334155', borderRadius: '16px',
+            padding: '40px', maxWidth: '600px', width: '90%', textAlign: 'center',
+            boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)'
+          }}>
+            <h2 style={{ fontSize: '28px', fontWeight: 700, marginBottom: '24px', color: '#f8fafc' }}>
+              Your Command Center 🕹️
+            </h2>
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', textAlign: 'left', marginBottom: '32px' }}>
+              <div style={{ display: 'flex', gap: '16px' }}>
+                <div style={{ fontSize: '24px' }}>📖</div>
+                <div>
+                  <h4 style={{ color: '#fff', marginBottom: '4px' }}>1. Read Mission Intel</h4>
+                  <p style={{ color: '#94a3b8', fontSize: '14px' }}>Always start here. It teaches you the SQL concept you need for the level.</p>
+                </div>
+              </div>
+              <div style={{ display: 'flex', gap: '16px' }}>
+                <div style={{ fontSize: '24px' }}>🏆</div>
+                <div>
+                  <h4 style={{ color: 'var(--gold)', marginBottom: '4px' }}>2. Accept the Challenge</h4>
+                  <p style={{ color: '#94a3b8', fontSize: '14px' }}>Look at the top bar. The golden text tells you exactly what data to fetch.</p>
+                </div>
+              </div>
+              <div style={{ display: 'flex', gap: '16px' }}>
+                <div style={{ fontSize: '24px' }}>⚡</div>
+                <div>
+                  <h4 style={{ color: '#fff', marginBottom: '4px' }}>3. Write & Verify</h4>
+                  <p style={{ color: '#94a3b8', fontSize: '14px' }}>Type your query in the SQL Script tab and hit <strong style={{ color: '#fff' }}>Verify Script</strong> to clear the level!</p>
+                </div>
+              </div>
+            </div>
+
+            <button 
+              className="primary" 
+              onClick={() => setShowOnboarding(false)}
+              style={{ width: '100%', padding: '14px', fontSize: '16px', justifyContent: 'center' }}
+            >
+              Got it, let's work! 💼
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

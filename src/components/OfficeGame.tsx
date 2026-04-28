@@ -23,6 +23,7 @@ const DESKS: Desk[] = [
 export function OfficeGame({ onSelectRole }: { onSelectRole: (role: Role) => void }) {
   const [playerPosition, setPlayerPosition] = useState<Position>({ x: 10, y: 10 });
   const [facing, setFacing] = useState<'up' | 'down' | 'left' | 'right'>('up');
+  const [showIntro, setShowIntro] = useState(true);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -92,22 +93,22 @@ export function OfficeGame({ onSelectRole }: { onSelectRole: (role: Role) => voi
         justifyContent: 'center',
         alignItems: 'center',
         width: '100%',
-        maxWidth: '1000px',
+        maxWidth: '1200px',
         padding: '20px'
       }}>
         <div className="office-grid" style={{
           display: 'grid',
-          gridTemplateColumns: `repeat(${GRID_WIDTH}, 40px)`,
-          gridTemplateRows: `repeat(${GRID_HEIGHT}, 40px)`,
+          gridTemplateColumns: `repeat(${GRID_WIDTH}, 52px)`,
+          gridTemplateRows: `repeat(${GRID_HEIGHT}, 52px)`,
           backgroundColor: '#1e293b', // Floor color
-          border: '8px solid #334155', // Office Walls
-          borderRadius: '12px',
+          border: '10px solid #334155', // Office Walls
+          borderRadius: '16px',
           boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
           position: 'relative',
           flexShrink: 0,
           // Subtle tile pattern
           backgroundImage: 'linear-gradient(#0f172a 1px, transparent 1px), linear-gradient(90deg, #0f172a 1px, transparent 1px)',
-          backgroundSize: '40px 40px',
+          backgroundSize: '52px 52px',
           transformOrigin: 'center center'
         }}>
 
@@ -123,7 +124,7 @@ export function OfficeGame({ onSelectRole }: { onSelectRole: (role: Role) => voi
             const desk = DESKS.find(d => d.x === x && d.y === y);
 
             return (
-              <div key={`${x}-${y}`} style={{ width: '40px', height: '40px', position: 'relative' }}>
+              <div key={`${x}-${y}`} style={{ width: '52px', height: '52px', position: 'relative' }}>
 
                 {/* Desks (Rendered as 2x2 blocks starting from top-left) */}
                 {desk && (
@@ -134,10 +135,10 @@ export function OfficeGame({ onSelectRole }: { onSelectRole: (role: Role) => voi
                   }}>
                     {/* Desk Surface */}
                     <div style={{
-                      width: '70px', height: '35px',
+                      width: '90px', height: '45px',
                       backgroundColor: '#475569',
-                      borderRadius: '4px',
-                      marginTop: '10px',
+                      borderRadius: '6px',
+                      marginTop: '15px',
                       boxShadow: '0 4px 6px rgba(0,0,0,0.3)',
                       position: 'relative',
                       display: 'flex', justifyContent: 'center'
@@ -235,21 +236,27 @@ export function OfficeGame({ onSelectRole }: { onSelectRole: (role: Role) => voi
             100% { transform: translateY(0px); }
           }
           
+          @media (max-width: 1200px) {
+            .office-grid {
+              transform: scale(0.85);
+            }
+          }
+          
           @media (max-width: 900px) {
             .office-grid {
-              transform: scale(0.8);
+              transform: scale(0.7);
             }
           }
           
           @media (max-width: 750px) {
             .office-grid {
-              transform: scale(0.65);
+              transform: scale(0.55);
             }
           }
           
-          @media (max-width: 600px) {
-            .office-grid {
-              transform: scale(0.5);
+          @media (max-height: 800px) {
+             .office-grid {
+              transform: scale(0.85);
             }
           }
           
@@ -259,6 +266,40 @@ export function OfficeGame({ onSelectRole }: { onSelectRole: (role: Role) => voi
             }
           }
         `}</style>
+
+        {/* Intro Overlay */}
+        {showIntro && (
+          <div style={{
+            position: 'absolute', inset: 0, zIndex: 100,
+            backgroundColor: 'rgba(15, 23, 42, 0.9)',
+            backdropFilter: 'blur(4px)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            borderRadius: '16px'
+          }}>
+            <div style={{
+              maxWidth: '450px', textAlign: 'center', padding: '40px',
+              backgroundColor: '#1e293b', border: '1px solid #334155',
+              borderRadius: '12px', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.5)'
+            }}>
+              <div style={{ fontSize: '48px', marginBottom: '20px' }}>🏙️</div>
+              <h2 style={{ fontSize: '24px', fontWeight: 700, marginBottom: '16px', color: '#f8fafc' }}>
+                Welcome to Headquarters!
+              </h2>
+              <p style={{ color: '#94a3b8', fontSize: '15px', lineHeight: 1.6, marginBottom: '24px' }}>
+                Use <strong style={{ color: '#f8fafc' }}>WASD</strong> or <strong style={{ color: '#f8fafc' }}>Arrow Keys</strong> to move your character.
+                <br /><br />
+                Walk up to any desk to start your mission. Each desk represents a different SQL role in the company.
+              </p>
+              <button 
+                className="primary" 
+                onClick={() => setShowIntro(false)}
+                style={{ width: '100%', padding: '12px', justifyContent: 'center' }}
+              >
+                Let's Go! 🚀
+              </button>
+            </div>
+          </div>
+        )}
       </div>
       </div>
 
