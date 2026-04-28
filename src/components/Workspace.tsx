@@ -115,17 +115,7 @@ export function Workspace({ role, onExit }: { role: Role; onExit: () => void }) 
         <div style={{ flex: 1 }}>
           <CurriculumPanel role={role} onExit={onExit} activeQuery={activeTab.query} onFillQuery={(q) => handleQueryChange(activeTab.id, q)} />
         </div>
-        <div style={{ padding: '0 20px', display: 'flex', gap: '12px' }}>
-          <button 
-            onClick={() => setShowOnboarding(true)}
-            style={{ 
-              backgroundColor: 'transparent', border: '1px solid #334155', color: '#94a3b8', 
-              padding: '6px 12px', borderRadius: '6px', fontSize: '12px', fontWeight: 600,
-              cursor: 'pointer'
-            }}
-          >
-            How to Guide
-          </button>
+        <div style={{ padding: '0 20px' }}>
           <button className="primary" onClick={() => executeQuery(activeTab.id)}>Verify Script</button>
         </div>
       </div>
