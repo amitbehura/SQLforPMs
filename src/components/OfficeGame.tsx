@@ -46,8 +46,8 @@ export function OfficeGame({ onSelectRole }: { onSelectRole: (role: Role) => voi
         newPos.y = Math.max(1, Math.min(GRID_HEIGHT - 2, newPos.y));
 
         // Check collision with desks (desks are 2x2 physically, but origin is top-left)
-        const hitDesk = DESKS.find(d => 
-          (newPos.x === d.x || newPos.x === d.x + 1) && 
+        const hitDesk = DESKS.find(d =>
+          (newPos.x === d.x || newPos.x === d.x + 1) &&
           (newPos.y === d.y || newPos.y === d.y + 1)
         );
 
@@ -85,26 +85,37 @@ export function OfficeGame({ onSelectRole }: { onSelectRole: (role: Role) => voi
         </p>
       </div>
 
-      {/* The Office Room */}
+      {/* The Office Room Wrapper for Responsiveness */}
       <div style={{
-        display: 'grid',
-        gridTemplateColumns: `repeat(${GRID_WIDTH}, 40px)`,
-        gridTemplateRows: `repeat(${GRID_HEIGHT}, 40px)`,
-        backgroundColor: '#1e293b', // Floor color
-        border: '8px solid #334155', // Office Walls
-        borderRadius: '12px',
-        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
-        position: 'relative',
-        // Subtle tile pattern
-        backgroundImage: 'linear-gradient(#0f172a 1px, transparent 1px), linear-gradient(90deg, #0f172a 1px, transparent 1px)',
-        backgroundSize: '40px 40px'
+        overflow: 'visible',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: '100%',
+        maxWidth: '1000px',
+        padding: '20px'
       }}>
-        
+        <div className="office-grid" style={{
+          display: 'grid',
+          gridTemplateColumns: `repeat(${GRID_WIDTH}, 40px)`,
+          gridTemplateRows: `repeat(${GRID_HEIGHT}, 40px)`,
+          backgroundColor: '#1e293b', // Floor color
+          border: '8px solid #334155', // Office Walls
+          borderRadius: '12px',
+          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
+          position: 'relative',
+          flexShrink: 0,
+          // Subtle tile pattern
+          backgroundImage: 'linear-gradient(#0f172a 1px, transparent 1px), linear-gradient(90deg, #0f172a 1px, transparent 1px)',
+          backgroundSize: '40px 40px',
+          transformOrigin: 'center center'
+        }}>
+
         {/* Render Plants/Decorations */}
         <div style={{ position: 'absolute', top: 10, left: 10, fontSize: '24px' }}>🪴</div>
         <div style={{ position: 'absolute', top: 10, right: 10, fontSize: '24px' }}>🪴</div>
         <div style={{ position: 'absolute', bottom: 10, left: 10, fontSize: '24px' }}>🗄️</div>
-        
+
         {/* Render Grid Elements */}
         {Array.from({ length: GRID_HEIGHT }).map((_, y) => (
           Array.from({ length: GRID_WIDTH }).map((_, x) => {
@@ -113,7 +124,7 @@ export function OfficeGame({ onSelectRole }: { onSelectRole: (role: Role) => voi
 
             return (
               <div key={`${x}-${y}`} style={{ width: '40px', height: '40px', position: 'relative' }}>
-                
+
                 {/* Desks (Rendered as 2x2 blocks starting from top-left) */}
                 {desk && (
                   <div style={{
@@ -143,7 +154,7 @@ export function OfficeGame({ onSelectRole }: { onSelectRole: (role: Role) => voi
                         {/* Screen Glow */}
                         <div style={{ width: '100%', height: '100%', backgroundColor: `${desk.themeColor}30` }} />
                       </div>
-                      
+
                       {/* Keyboard */}
                       <div style={{
                         position: 'absolute', bottom: '5px',
@@ -216,16 +227,41 @@ export function OfficeGame({ onSelectRole }: { onSelectRole: (role: Role) => voi
             );
           })
         ))}
-        
+
         <style>{`
           @keyframes float {
             0% { transform: translateY(0px); }
             50% { transform: translateY(-4px); }
             100% { transform: translateY(0px); }
           }
+          
+          @media (max-width: 900px) {
+            .office-grid {
+              transform: scale(0.8);
+            }
+          }
+          
+          @media (max-width: 750px) {
+            .office-grid {
+              transform: scale(0.65);
+            }
+          }
+          
+          @media (max-width: 600px) {
+            .office-grid {
+              transform: scale(0.5);
+            }
+          }
+          
+          @media (max-height: 700px) {
+             .office-grid {
+              transform: scale(0.7);
+            }
+          }
         `}</style>
       </div>
-      
+      </div>
+
       <div style={{ marginTop: '24px', display: 'flex', gap: '20px', color: '#64748b', fontSize: '14px', fontWeight: 500 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <kbd style={{ backgroundColor: '#1e293b', padding: '4px 8px', borderRadius: '4px', border: '1px solid #334155', color: '#f8fafc' }}>W</kbd>

@@ -105,7 +105,7 @@ export function Workspace({ role, onExit }: { role: Role; onExit: () => void }) 
       <div className="flex flex-1" style={{ overflow: 'hidden' }}>
         
         {/* Left Panel: Database Navigator */}
-        <div style={{ width: '250px', borderRight: '1px solid var(--border-color)', backgroundColor: 'var(--bg-panel)', display: 'flex', flexDirection: 'column' }}>
+        <div style={{ width: '250px', minWidth: '200px', borderRight: '1px solid var(--border-color)', backgroundColor: 'var(--bg-panel)', display: 'flex', flexDirection: 'column', flexShrink: 0 }}>
           <div style={{ padding: '8px', borderBottom: '1px solid var(--border-color)', fontSize: '12px', fontWeight: 'bold', color: 'var(--text-muted)' }}>
             Database Navigator
           </div>

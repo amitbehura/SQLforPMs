@@ -140,16 +140,24 @@ export function CurriculumPanel({ role, onExit, activeQuery, onFillQuery }: Curr
                       if (phase === 'teaching') startTesting();
                     }}
                     style={{ 
-                      width: '16px', height: '16px', borderRadius: '50%', 
+                      width: '22px', height: '22px', borderRadius: '50%', 
                       backgroundColor: bgColor,
                       border: isSelected ? '2px solid white' : '1px solid var(--border-color)',
-                      boxShadow: isSelected ? '0 0 8px var(--accent-color)' : 'none',
+                      boxShadow: isSelected ? '0 0 10px var(--gold)' : 'none',
                       cursor: 'pointer',
-                      transition: 'all 0.2s ease'
+                      transition: 'all 0.2s ease',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '10px',
+                      fontWeight: 'bold',
+                      color: isCompleted || isSkipped ? 'white' : 'var(--text-muted)'
                     }} 
-                  />
+                  >
+                    {idx + 1}
+                  </div>
                   {idx < assignment.tests.length - 1 && (
-                    <div style={{ width: '10px', height: '2px', backgroundColor: 'var(--border-color)', marginLeft: '8px' }} />
+                    <div style={{ width: '10px', height: '2px', backgroundColor: 'var(--border-color)', marginLeft: '4px', marginRight: '4px' }} />
                   )}
                 </div>
               );
@@ -172,9 +180,9 @@ export function CurriculumPanel({ role, onExit, activeQuery, onFillQuery }: Curr
           <>
             {activeTest ? (
               <>
-                <p style={{ fontSize: '15px', lineHeight: '1.4', margin: '10px 0', padding: '12px', backgroundColor: 'var(--bg-dark)', borderRadius: '6px', borderLeft: '3px solid var(--accent-color)' }}>
+                <p style={{ fontSize: '15px', lineHeight: '1.4', margin: '10px 0', padding: '12px', backgroundColor: 'var(--bg-dark)', borderRadius: '6px', borderLeft: '3px solid var(--gold)' }}>
                   {completedTests.includes(activeTest.id) && <span style={{ color: 'var(--success)', marginRight: '8px' }}>[COMPLETED]</span>}
-                  <strong>Challenge:</strong> {activeTest.prompt}
+                  <strong style={{ color: 'var(--gold)', textShadow: '0 0 10px var(--gold-glow)' }}>Challenge:</strong> {activeTest.prompt}
                 </p>
                 {verifyError && (
                   <div style={{ color: '#ff4d4d', fontSize: '13px', marginTop: '8px', padding: '8px', backgroundColor: 'rgba(255, 77, 77, 0.1)', borderRadius: '4px' }}>
