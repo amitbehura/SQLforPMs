@@ -77,40 +77,37 @@ export function OfficeGame({ onSelectRole }: { onSelectRole: (role: Role) => voi
       fontFamily: 'var(--font-sans)',
       position: 'relative'
     }}>
-      <div style={{ textAlign: 'center', marginBottom: '2vh' }}>
-        <h1 style={{ fontSize: 'min(48px, 6vw)', fontWeight: 800, margin: '0 0 8px 0', color: '#f8fafc', textShadow: '0 0 20px rgba(255,255,255,0.1)' }}>
+      <div style={{ textAlign: 'center', marginBottom: '2vh', zIndex: 10 }}>
+        <h1 style={{ fontSize: 'min(36px, 5vw)', fontWeight: 800, margin: '0 0 4px 0', color: '#f8fafc' }}>
           PayPaySQL Headquarters
         </h1>
-        <p style={{ color: '#94a3b8', fontSize: 'min(18px, 3vw)', margin: 0 }}>
+        <p style={{ color: '#94a3b8', fontSize: 'min(16px, 2.5vw)', margin: 0 }}>
           Welcome to your first day. Walk to your desk to begin.
         </p>
       </div>
 
-      {/* The Office Room Wrapper for Responsiveness */}
-      <div style={{
-        overflow: 'visible',
+      <div className="office-grid-container" style={{
+        flex: 1,
         display: 'flex',
-        justifyContent: 'center',
         alignItems: 'center',
+        justifyContent: 'center',
         width: '100%',
-        maxWidth: '1200px',
-        padding: '20px'
+        height: '100%',
+        padding: '20px',
+        overflow: 'hidden'
       }}>
         <div className="office-grid" style={{
           display: 'grid',
-          gridTemplateColumns: `repeat(${GRID_WIDTH}, 52px)`,
-          gridTemplateRows: `repeat(${GRID_HEIGHT}, 52px)`,
-          backgroundColor: '#1e293b', // Floor color
-          border: '10px solid #334155', // Office Walls
-          borderRadius: '16px',
+          gridTemplateColumns: `repeat(${GRID_WIDTH}, var(--tile-size))`,
+          gridTemplateRows: `repeat(${GRID_HEIGHT}, var(--tile-size))`,
+          backgroundColor: '#1e293b',
+          border: 'min(10px, 1vw) solid #334155',
+          borderRadius: '12px',
           boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
           position: 'relative',
-          flexShrink: 0,
-          // Subtle tile pattern
           backgroundImage: 'linear-gradient(#0f172a 1px, transparent 1px), linear-gradient(90deg, #0f172a 1px, transparent 1px)',
-          backgroundSize: '52px 52px',
-          transformOrigin: 'center center'
-        }}>
+          backgroundSize: 'var(--tile-size) var(--tile-size)',
+        } as React.CSSProperties}>
 
         {/* Render Plants/Decorations */}
         <div style={{ position: 'absolute', top: 10, left: 10, fontSize: '24px' }}>🪴</div>
@@ -124,7 +121,7 @@ export function OfficeGame({ onSelectRole }: { onSelectRole: (role: Role) => voi
             const desk = DESKS.find(d => d.x === x && d.y === y);
 
             return (
-              <div key={`${x}-${y}`} style={{ width: '52px', height: '52px', position: 'relative' }}>
+              <div key={`${x}-${y}`} style={{ width: 'var(--tile-size)', height: 'var(--tile-size)', position: 'relative' }}>
 
                 {/* Desks (Rendered as 2x2 blocks starting from top-left) */}
                 {desk && (
@@ -135,10 +132,10 @@ export function OfficeGame({ onSelectRole }: { onSelectRole: (role: Role) => voi
                   }}>
                     {/* Desk Surface */}
                     <div style={{
-                      width: '90px', height: '45px',
+                      width: 'calc(var(--tile-size) * 1.7)', height: 'calc(var(--tile-size) * 0.8)',
                       backgroundColor: '#475569',
-                      borderRadius: '6px',
-                      marginTop: '15px',
+                      borderRadius: '4px',
+                      marginTop: 'calc(var(--tile-size) * 0.3)',
                       boxShadow: '0 4px 6px rgba(0,0,0,0.3)',
                       position: 'relative',
                       display: 'flex', justifyContent: 'center'
@@ -166,22 +163,23 @@ export function OfficeGame({ onSelectRole }: { onSelectRole: (role: Role) => voi
 
                     {/* Chair */}
                     <div style={{
-                      width: '20px', height: '15px',
+                      width: 'calc(var(--tile-size) * 0.4)', height: 'calc(var(--tile-size) * 0.3)',
                       backgroundColor: '#334155',
                       borderRadius: '10px 10px 0 0',
-                      marginTop: '5px',
+                      marginTop: 'calc(var(--tile-size) * 0.1)',
                       boxShadow: '0 2px 4px rgba(0,0,0,0.5)'
                     }} />
 
                     {/* Label floating above */}
                     <div style={{
-                      position: 'absolute', top: '-45px',
+                      position: 'absolute', top: 'calc(var(--tile-size) * -0.8)',
                       backgroundColor: '#0f172a', color: '#f8fafc',
-                      padding: '6px 12px', borderRadius: '6px',
-                      fontSize: '14px', fontWeight: 700,
-                      borderBottom: `3px solid ${desk.themeColor}`,
+                      padding: 'calc(var(--tile-size) * 0.1) calc(var(--tile-size) * 0.2)', 
+                      borderRadius: '4px',
+                      fontSize: 'calc(var(--tile-size) * 0.25)', fontWeight: 700,
+                      borderBottom: `2px solid ${desk.themeColor}`,
                       whiteSpace: 'nowrap',
-                      boxShadow: '0 8px 16px rgba(0,0,0,0.4)',
+                      boxShadow: '0 4px 8px rgba(0,0,0,0.4)',
                       animation: 'float 3s ease-in-out infinite'
                     }}>
                       {desk.label}
@@ -194,31 +192,33 @@ export function OfficeGame({ onSelectRole }: { onSelectRole: (role: Role) => voi
                   <div style={{
                     position: 'absolute', top: '50%', left: '50%',
                     transform: 'translate(-50%, -50%)',
-                    zIndex: 10, width: '28px', height: '28px',
+                    zIndex: 10, 
+                    width: 'calc(var(--tile-size) * 0.6)', 
+                    height: 'calc(var(--tile-size) * 0.6)',
                     display: 'flex', flexDirection: 'column', alignItems: 'center'
                   }}>
                     {/* Player Head */}
                     <div style={{
-                      width: '16px', height: '16px',
-                      backgroundColor: '#fca5a5', // Skin tone
+                      width: 'calc(var(--tile-size) * 0.35)', height: 'calc(var(--tile-size) * 0.35)',
+                      backgroundColor: '#fca5a5',
                       borderRadius: '50%',
                       boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
                       zIndex: 2
                     }}>
-                      {/* Directional Hair/Eyes indicator */}
+                      {/* Directional indicator */}
                       <div style={{
                         width: '100%', height: '100%', position: 'relative',
                         transform: facing === 'left' ? 'rotate(-90deg)' : facing === 'right' ? 'rotate(90deg)' : facing === 'down' ? 'rotate(180deg)' : 'rotate(0deg)'
                       }}>
-                        <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '6px', backgroundColor: '#451a03', borderRadius: '8px 8px 0 0' }} />
+                        <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '30%', backgroundColor: '#451a03', borderRadius: '8px 8px 0 0' }} />
                       </div>
                     </div>
                     {/* Player Body */}
                     <div style={{
-                      width: '24px', height: '12px',
-                      backgroundColor: '#3b82f6', // Blue shirt
+                      width: 'calc(var(--tile-size) * 0.5)', height: 'calc(var(--tile-size) * 0.25)',
+                      backgroundColor: '#3b82f6',
                       borderRadius: '12px 12px 4px 4px',
-                      marginTop: '-4px',
+                      marginTop: 'calc(var(--tile-size) * -0.1)',
                       boxShadow: '0 4px 6px rgba(0,0,0,0.3)',
                       zIndex: 1
                     }} />
@@ -236,14 +236,13 @@ export function OfficeGame({ onSelectRole }: { onSelectRole: (role: Role) => voi
             100% { transform: translateY(0px); }
           }
           
-          /* Dynamic scaling to fill viewport while maintaining aspect ratio */
-          .office-grid {
-            transform: scale(min(calc(90vw / 1100), calc(65vh / 680)));
+          :root {
+            --tile-size: min(4.5vw, 6.5vh);
           }
 
           @media (max-width: 600px) {
-            .office-grid {
-              transform: scale(min(calc(95vw / 1100), calc(60vh / 680)));
+            :root {
+              --tile-size: min(4.8vw, 5vh);
             }
           }
         `}</style>
