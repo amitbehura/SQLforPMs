@@ -7,7 +7,10 @@ const SECTIONS = [
   { id: 'filtering', title: '2. Filtering Data', icon: <Filter size={16} /> },
   { id: 'aggregations', title: '3. Aggregations', icon: <Calculator size={16} /> },
   { id: 'joins', title: '4. Joins', icon: <Link size={16} /> },
-  { id: 'funnels', title: '5. PM Funnels', icon: <Layers size={16} /> }
+  { id: 'logic', title: '5. Business Logic', icon: <Layers size={16} /> },
+  { id: 'advanced', title: '6. Power Tools', icon: <Database size={16} /> },
+  { id: 'window', title: '7. Analysis Pro', icon: <Activity size={16} /> },
+  { id: 'funnels', title: '8. PM Funnels', icon: <Filter size={16} /> }
 ];
 
 export function SQLReferenceBook({ onClose }: { onClose: () => void }) {
@@ -197,15 +200,80 @@ export function SQLReferenceBook({ onClose }: { onClose: () => void }) {
                 <p style={{ color: '#94a3b8', fontSize: '18px', marginBottom: '32px' }}>Connecting tables together.</p>
                 
                 <h3 style={{ fontSize: '20px', color: '#38bdf8', marginTop: '32px' }}>INNER JOIN</h3>
-                <p>Requires a match in BOTH tables. If a merchant has no payments, they disappear.</p>
+                <p>Requires a match in BOTH tables. If a merchant has no payments, they disappear from your list.</p>
                 <code style={{ display: 'block', padding: '16px', background: '#000', borderRadius: '8px', color: '#9cdcfe', marginTop: '12px' }}>
                   SELECT m.name, p.amount FROM merchants m JOIN payments p ON m.id = p.merchant_id;
                 </code>
 
                 <h3 style={{ fontSize: '20px', color: '#38bdf8', marginTop: '32px' }}>LEFT JOIN</h3>
-                <p>Keeps ALL rows from the left table, even if there is no match on the right. Perfect for finding "Drop offs" (where right ID IS NULL).</p>
+                <p>Keeps ALL rows from the left table. This is the PM's best friend for finding drop-offs.</p>
                 <code style={{ display: 'block', padding: '16px', background: '#000', borderRadius: '8px', color: '#9cdcfe', marginTop: '12px' }}>
-                  SELECT m.name FROM merchants m LEFT JOIN payments p ON m.id = p.merchant_id WHERE p.id IS NULL;
+                  SELECT m.name FROM merchants m LEFT JOIN payments p ON m.id = p.merchant_id;
+                </code>
+
+                <h3 style={{ fontSize: '20px', color: '#38bdf8', marginTop: '32px' }}>SELF JOIN</h3>
+                <p>Joining a table to itself. Use this to compare different rows in the same spreadsheet, like finding a user's "Previous Order" or "Next Order".</p>
+                <code style={{ display: 'block', padding: '16px', background: '#000', borderRadius: '8px', color: '#9cdcfe', marginTop: '12px' }}>
+                  {"SELECT p1.id, p2.id FROM payments p1 JOIN payments p2 ON p1.user_id = p2.user_id WHERE p1.id != p2.id;"}
+                </code>
+              </div>
+            )}
+
+            {activeSection === 'logic' && (
+              <div className="prose">
+                <h1 style={{ fontSize: '36px', marginBottom: '8px' }}>5. Business Logic</h1>
+                <p style={{ color: '#94a3b8', fontSize: '18px', marginBottom: '32px' }}>Cleaning and bucketizing your data on the fly.</p>
+                
+                <h3 style={{ fontSize: '20px', color: '#38bdf8', marginTop: '32px' }}>CASE WHEN (If/Else)</h3>
+                <p>Create dynamic categories. Perfect for user segmentation (e.g. "Whale" vs "Minnow").</p>
+                <code style={{ display: 'block', padding: '16px', background: '#000', borderRadius: '8px', color: '#9cdcfe', marginTop: '12px' }}>
+                  {"SELECT amount, CASE WHEN amount > 500 THEN 'Premium' ELSE 'Standard' END as tier FROM payments;"}
+                </code>
+
+                <h3 style={{ fontSize: '20px', color: '#38bdf8', marginTop: '32px' }}>COALESCE</h3>
+                <p>Handles NULLs. If a value is missing, it provides a fallback (like 0).</p>
+                <code style={{ display: 'block', padding: '16px', background: '#000', borderRadius: '8px', color: '#9cdcfe', marginTop: '12px' }}>
+                  {"SELECT COALESCE(discount, 0) FROM orders;"}
+                </code>
+              </div>
+            )}
+
+            {activeSection === 'advanced' && (
+              <div className="prose">
+                <h1 style={{ fontSize: '36px', marginBottom: '8px' }}>6. Power Tools</h1>
+                <p style={{ color: '#94a3b8', fontSize: '18px', marginBottom: '32px' }}>Writing complex queries that stay readable.</p>
+                
+                <h3 style={{ fontSize: '20px', color: '#38bdf8', marginTop: '32px' }}>Subqueries</h3>
+                <p>A "query inside a query". Use it when you need to use the result of one query to filter another.</p>
+                <code style={{ display: 'block', padding: '16px', background: '#000', borderRadius: '8px', color: '#9cdcfe', marginTop: '12px' }}>
+                  {"SELECT name FROM users WHERE id IN (SELECT user_id FROM payments WHERE amount > 100);"}
+                </code>
+
+                <h3 style={{ fontSize: '20px', color: '#38bdf8', marginTop: '32px' }}>CTEs (WITH clause)</h3>
+                <p>The cleaner way to write subqueries. Think of it like creating a temporary "Named Range" in Excel that you can use later in the same query.</p>
+                <code style={{ display: 'block', padding: '16px', background: '#000', borderRadius: '8px', color: '#9cdcfe', marginTop: '12px' }}>
+                  {"WITH high_value_users AS (SELECT user_id FROM payments WHERE amount > 100) \nSELECT * FROM users JOIN high_value_users ON users.id = high_value_users.user_id;"}
+                </code>
+              </div>
+            )}
+
+            {activeSection === 'window' && (
+              <div className="prose">
+                <h1 style={{ fontSize: '36px', marginBottom: '8px' }}>7. Analysis Pro</h1>
+                <p style={{ color: '#94a3b8', fontSize: '18px', marginBottom: '32px' }}>The PM superpower for growth analysis.</p>
+                
+                <h3 style={{ fontSize: '20px', color: '#38bdf8', marginTop: '32px' }}>Window Functions (OVER)</h3>
+                <p>Perform math across multiple rows while still seeing every row. Perfect for running totals or ranks.</p>
+                
+                <h4 style={{ color: '#cbd5e1', marginTop: '20px' }}>ROW_NUMBER() / RANK()</h4>
+                <p>Assigns a number to each row in a bucket. Great for finding "First Order Date" or "Last Action".</p>
+                <code style={{ display: 'block', padding: '16px', background: '#000', borderRadius: '8px', color: '#9cdcfe', marginTop: '12px' }}>
+                  {"SELECT user_id, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY created_at) FROM sessions;"}
+                </code>
+
+                <h4 style={{ color: '#cbd5e1', marginTop: '20px' }}>Running Totals</h4>
+                <code style={{ display: 'block', padding: '16px', background: '#000', borderRadius: '8px', color: '#9cdcfe', marginTop: '12px' }}>
+                  {"SELECT date, SUM(amount) OVER (ORDER BY date) as cum_revenue FROM daily_sales;"}
                 </code>
               </div>
             )}

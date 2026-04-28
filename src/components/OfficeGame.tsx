@@ -77,11 +77,11 @@ export function OfficeGame({ onSelectRole }: { onSelectRole: (role: Role) => voi
       fontFamily: 'var(--font-sans)',
       position: 'relative'
     }}>
-      <div style={{ textAlign: 'center', marginBottom: '30px' }}>
-        <h1 style={{ fontSize: '36px', fontWeight: 700, margin: '0 0 8px 0', color: '#f8fafc' }}>
+      <div style={{ textAlign: 'center', marginBottom: '2vh' }}>
+        <h1 style={{ fontSize: 'min(48px, 6vw)', fontWeight: 800, margin: '0 0 8px 0', color: '#f8fafc', textShadow: '0 0 20px rgba(255,255,255,0.1)' }}>
           PayPaySQL Headquarters
         </h1>
-        <p style={{ color: '#94a3b8', fontSize: '16px', margin: 0 }}>
+        <p style={{ color: '#94a3b8', fontSize: 'min(18px, 3vw)', margin: 0 }}>
           Welcome to your first day. Walk to your desk to begin.
         </p>
       </div>
@@ -175,13 +175,13 @@ export function OfficeGame({ onSelectRole }: { onSelectRole: (role: Role) => voi
 
                     {/* Label floating above */}
                     <div style={{
-                      position: 'absolute', top: '-40px',
+                      position: 'absolute', top: '-45px',
                       backgroundColor: '#0f172a', color: '#f8fafc',
-                      padding: '4px 8px', borderRadius: '4px',
-                      fontSize: '12px', fontWeight: 600,
-                      borderBottom: `2px solid ${desk.themeColor}`,
+                      padding: '6px 12px', borderRadius: '6px',
+                      fontSize: '14px', fontWeight: 700,
+                      borderBottom: `3px solid ${desk.themeColor}`,
                       whiteSpace: 'nowrap',
-                      boxShadow: '0 4px 6px rgba(0,0,0,0.3)',
+                      boxShadow: '0 8px 16px rgba(0,0,0,0.4)',
                       animation: 'float 3s ease-in-out infinite'
                     }}>
                       {desk.label}
@@ -236,33 +236,14 @@ export function OfficeGame({ onSelectRole }: { onSelectRole: (role: Role) => voi
             100% { transform: translateY(0px); }
           }
           
-          @media (max-width: 1200px) {
+          /* Dynamic scaling to fill viewport while maintaining aspect ratio */
+          .office-grid {
+            transform: scale(min(calc(90vw / 1100), calc(65vh / 680)));
+          }
+
+          @media (max-width: 600px) {
             .office-grid {
-              transform: scale(0.85);
-            }
-          }
-          
-          @media (max-width: 900px) {
-            .office-grid {
-              transform: scale(0.7);
-            }
-          }
-          
-          @media (max-width: 750px) {
-            .office-grid {
-              transform: scale(0.55);
-            }
-          }
-          
-          @media (max-height: 800px) {
-             .office-grid {
-              transform: scale(0.85);
-            }
-          }
-          
-          @media (max-height: 700px) {
-             .office-grid {
-              transform: scale(0.7);
+              transform: scale(min(calc(95vw / 1100), calc(60vh / 680)));
             }
           }
         `}</style>
