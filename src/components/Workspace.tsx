@@ -106,8 +106,28 @@ export function Workspace({ role, onExit }: { role: Role; onExit: () => void }) 
     <div className="flex flex-col" style={{ height: '100%' }}>
       <TeachingModal />
       {/* Top Header / Curriculum Panel */}
-      <div style={{ borderBottom: '1px solid var(--border-color)', backgroundColor: 'var(--bg-panel)' }}>
-        <CurriculumPanel role={role} onExit={onExit} activeQuery={activeTab.query} onFillQuery={(q) => handleQueryChange(activeTab.id, q)} />
+      <div style={{ 
+        borderBottom: '1px solid var(--border-color)', 
+        backgroundColor: 'var(--bg-panel)',
+        display: 'flex',
+        alignItems: 'center'
+      }}>
+        <div style={{ flex: 1 }}>
+          <CurriculumPanel role={role} onExit={onExit} activeQuery={activeTab.query} onFillQuery={(q) => handleQueryChange(activeTab.id, q)} />
+        </div>
+        <div style={{ padding: '0 20px', display: 'flex', gap: '12px' }}>
+          <button 
+            onClick={() => setShowOnboarding(true)}
+            style={{ 
+              backgroundColor: 'transparent', border: '1px solid #334155', color: '#94a3b8', 
+              padding: '6px 12px', borderRadius: '6px', fontSize: '12px', fontWeight: 600,
+              cursor: 'pointer'
+            }}
+          >
+            How to Guide
+          </button>
+          <button className="primary" onClick={() => executeQuery(activeTab.id)}>Verify Script</button>
+        </div>
       </div>
 
       {/* Main Content Area */}
@@ -182,41 +202,54 @@ export function Workspace({ role, onExit }: { role: Role; onExit: () => void }) 
       </div>
 
       {/* Workspace Onboarding Overlay */}
-      {showOnboarding && (activeTabId === 'tutorial' || activeTabId === '1') && (
+      {showOnboarding && (
         <div style={{
           position: 'fixed', inset: 0, zIndex: 1000,
-          backgroundColor: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)',
+          backgroundColor: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(8px)',
           display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'
         }}>
           <div style={{
-            backgroundColor: '#1e293b', border: '1px solid #334155', borderRadius: '16px',
-            padding: '40px', maxWidth: '600px', width: '90%', textAlign: 'center',
-            boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)'
+            backgroundColor: '#1e293b', border: '1px solid #334155', borderRadius: '24px',
+            padding: '48px', maxWidth: '650px', width: '90%', 
+            boxShadow: '0 32px 64px -12px rgba(0,0,0,0.5)'
           }}>
-            <h2 style={{ fontSize: '28px', fontWeight: 700, marginBottom: '24px', color: '#f8fafc' }}>
+            <h2 style={{ fontSize: '32px', fontWeight: 800, marginBottom: '8px', color: '#f8fafc', textAlign: 'center' }}>
               Your Command Center 🕹️
             </h2>
+            <p style={{ color: '#94a3b8', textAlign: 'center', marginBottom: '40px', fontSize: '16px' }}>
+              Here is how to navigate your mission workspace.
+            </p>
             
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', textAlign: 'left', marginBottom: '32px' }}>
-              <div style={{ display: 'flex', gap: '16px' }}>
-                <div style={{ fontSize: '24px' }}>📖</div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', textAlign: 'left', marginBottom: '40px' }}>
+              <div style={{ display: 'flex', gap: '20px' }}>
+                <div style={{ backgroundColor: '#0f172a', width: '48px', height: '48px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px', flexShrink: 0 }}>📖</div>
                 <div>
-                  <h4 style={{ color: '#fff', marginBottom: '4px' }}>1. Read Mission Intel</h4>
-                  <p style={{ color: '#94a3b8', fontSize: '14px' }}>Always start here. It teaches you the SQL concept you need for the level.</p>
+                  <h4 style={{ color: '#f8fafc', marginBottom: '4px', fontSize: '17px' }}>1. Mission Intel Tab</h4>
+                  <p style={{ color: '#94a3b8', fontSize: '14px', lineHeight: 1.5 }}>Think of this as your **Study Sheet**. It explains the SQL concept (like SELECT or JOIN) you need to learn for this level.</p>
                 </div>
               </div>
-              <div style={{ display: 'flex', gap: '16px' }}>
-                <div style={{ fontSize: '24px' }}>🏆</div>
+              
+              <div style={{ display: 'flex', gap: '20px' }}>
+                <div style={{ backgroundColor: '#0f172a', width: '48px', height: '48px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px', flexShrink: 0 }}>🏆</div>
                 <div>
-                  <h4 style={{ color: 'var(--gold)', marginBottom: '4px' }}>2. Accept the Challenge</h4>
-                  <p style={{ color: '#94a3b8', fontSize: '14px' }}>Look at the top bar. The golden text tells you exactly what data to fetch.</p>
+                  <h4 style={{ color: '#fbbf24', marginBottom: '4px', fontSize: '17px' }}>2. The Challenge (Top Bar)</h4>
+                  <p style={{ color: '#94a3b8', fontSize: '14px', lineHeight: 1.5 }}>The **Golden Text** in the top bar is your objective. It tells you exactly what data your boss wants you to find.</p>
                 </div>
               </div>
-              <div style={{ display: 'flex', gap: '16px' }}>
-                <div style={{ fontSize: '24px' }}>⚡</div>
+
+              <div style={{ display: 'flex', gap: '20px' }}>
+                <div style={{ backgroundColor: '#0f172a', width: '48px', height: '48px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px', flexShrink: 0 }}>💻</div>
                 <div>
-                  <h4 style={{ color: '#fff', marginBottom: '4px' }}>3. Write & Verify</h4>
-                  <p style={{ color: '#94a3b8', fontSize: '14px' }}>Type your query in the SQL Script tab and hit <strong style={{ color: '#fff' }}>Verify Script</strong> to clear the level!</p>
+                  <h4 style={{ color: '#f8fafc', marginBottom: '4px', fontSize: '17px' }}>3. SQL Script Tab</h4>
+                  <p style={{ color: '#94a3b8', fontSize: '14px', lineHeight: 1.5 }}>This is your **Editor**. Switch to this tab to type your SQL query. You can run it multiple times to check your results.</p>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', gap: '20px' }}>
+                <div style={{ backgroundColor: '#38bdf8', width: '48px', height: '48px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px', flexShrink: 0 }}>🚀</div>
+                <div>
+                  <h4 style={{ color: '#f8fafc', marginBottom: '4px', fontSize: '17px' }}>4. Verify Button</h4>
+                  <p style={{ color: '#94a3b8', fontSize: '14px', lineHeight: 1.5 }}>When you think you've solved the challenge, hit **Verify Script**. If it matches the goal, you advance to the next level!</p>
                 </div>
               </div>
             </div>
@@ -224,7 +257,7 @@ export function Workspace({ role, onExit }: { role: Role; onExit: () => void }) 
             <button 
               className="primary" 
               onClick={() => setShowOnboarding(false)}
-              style={{ width: '100%', padding: '14px', fontSize: '16px', justifyContent: 'center' }}
+              style={{ width: '100%', padding: '16px', fontSize: '18px', justifyContent: 'center', borderRadius: '12px', fontWeight: 700 }}
             >
               Got it, let's work! 💼
             </button>
