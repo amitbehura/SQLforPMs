@@ -77,11 +77,11 @@ export function OfficeGame({ onSelectRole }: { onSelectRole: (role: Role) => voi
       fontFamily: 'var(--font-sans)',
       position: 'relative'
     }}>
-      <div style={{ textAlign: 'center', marginBottom: '2vh', zIndex: 10 }}>
-        <h1 style={{ fontSize: 'min(36px, 5vw)', fontWeight: 800, margin: '0 0 4px 0', color: '#f8fafc' }}>
+      <div style={{ textAlign: 'center', marginBottom: '40px', zIndex: 10 }}>
+        <h1 style={{ fontSize: 'min(36px, 5vw)', fontWeight: 800, margin: '0 0 12px 0', color: '#f8fafc', letterSpacing: '-0.02em' }}>
           PayPaySQL Headquarters
         </h1>
-        <p style={{ color: '#94a3b8', fontSize: 'min(16px, 2.5vw)', margin: 0 }}>
+        <p style={{ color: '#94a3b8', fontSize: 'min(16px, 2.5vw)', margin: 0, fontWeight: 500 }}>
           Welcome to your first day. Walk to your desk to begin.
         </p>
       </div>
@@ -237,7 +237,7 @@ export function OfficeGame({ onSelectRole }: { onSelectRole: (role: Role) => voi
           }
           
           :root {
-            --tile-size: min(4.5vw, 6.5vh);
+            --tile-size: min(3.8vw, 5.5vh);
           }
 
           @media (max-width: 600px) {
